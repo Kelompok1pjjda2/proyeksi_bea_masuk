@@ -45,45 +45,56 @@ st.markdown("<h1 style='text-align: center; color: #243A74; font-family:sans-ser
 menu = st.sidebar.selectbox("Select Menu", ("Dashboard", "Prediksi"))
 
 if menu == "Prediksi":
-    
+
     st.write(data.head(2))
     tahun= st.selectbox("Pilih tahun",data['TAHUN'].unique())
-    for item in data['TAHUN'].unique():
-         if item == tahun:
-             st.write(' Tahun yang dipilih adalah ', str(tahun))
+    for item1 in data['TAHUN'].unique():
+        if item1 == tahun:
+            st.write(' Tahun yang dipilih adalah ', str(tahun))
+
+ 
+    bulan= st.selectbox("Pilih bulan",data['BULAN'].unique())
+    for item2 in data['BULAN'].unique():
+        if item2 == bulan:
+            st.write(' Bulan yang dipilih adalah ', str (bulan))
+
+    # st.write(data.head(2))
+    # tahun= st.selectbox("Pilih tahun",data['TAHUN'].unique())
+    # for item in data['TAHUN'].unique():
+    #      if item == tahun:
+    #          st.write(' Tahun yang dipilih adalah ', str(tahun))
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("<p style='text-align: center; color: #FFCC29; font-family:arial'>inflasi</p>", unsafe_allow_html=True)
-        
-        input_inf = st.number_input('Nilai inflasi',key=1, value= data[(data['BULAN'] == 'Desember') & (data['TAHUN'] == tahun)]['INFLASI'].values[0])
+        st.markdown("<p style='text-align: center; color: #FFCC29; font-family:arial'>INFLASI</p>", unsafe_allow_html=True)
+        input_inf = st.number_input('Nilai inflasi',key=1, value= data[(data['BULAN'] == bulan) & (data['TAHUN'] == tahun)]['INFLASI'].values[0])
         for item3 in data['INFLASI'].unique():
-            if item == tahun and data['BULAN'] == 'Desember':
+            if item1 == tahun and (item2 == data['BULAN'] == bulan):
                 st.write(input_inf)
         
         
         st.markdown("<p style='text-align: center; color: #FFCC29; font-family:arial'>ARAMCO (AVG)  </p>", unsafe_allow_html=True)
-        input_aramco= st.number_input('ARAMCO (AVG)',key=2,value= data[(data['TAHUN'] == tahun) & (data['BULAN'] == 'Desember')]['ARAMCO (AVG)'].values[0])
+        input_aramco= st.number_input('ARAMCO (AVG)',key=2,value= data[(data['TAHUN'] == tahun) & (data['BULAN'] == bulan)]['ARAMCO (AVG)'].values[0])
         for item4 in data['ARAMCO (AVG)'].unique():
-            if item == tahun and data['BULAN'] == 'Desember':
+            if item1 == tahun and (item2 == data['BULAN'] == bulan):
                 st.write(input_aramco)
     with col2:
         st.markdown("<p style='text-align: center; color: #FFCC29; font-family:arial'>KURS TENGAH BI (AVG)</p>", unsafe_allow_html=True)
-        
-        input_kurs = st.number_input('KURS TENGAH BI (AVG)',key=3, value= data[(data['TAHUN'] == tahun) & (data['BULAN'] == 'Desember')]['KURS TENGAH BI (AVG)'].values[0])
+        input_kurs = st.number_input('KURS TENGAH BI (AVG)',key=3, value= data[(data['TAHUN'] == tahun) & (data['BULAN'] == bulan)]['KURS TENGAH BI (AVG)'].values[0])
         for item3 in data['KURS TENGAH BI (AVG)'].unique():
-            if item == tahun and data['BULAN'] == 'Desember':
+            if item1 == tahun and (item2 == data['BULAN'] == bulan):
                 st.write(input_kurs)
         
         
         st.markdown("<p style='text-align: center; color: #FFCC29; font-family:arial'>GDP</p>", unsafe_allow_html=True)
-        input_gdp = st.number_input('GDP',key=4,value= data[(data['TAHUN'] == tahun) & (data['BULAN'] == 'Desember')]['GDP'].values[0])
+        input_gdp = st.number_input('GDP',key=4,value= data[(data['TAHUN'] == tahun) & (data['BULAN'] == bulan)]['GDP'].values[0])
         for item4 in data['GDP'].unique():
-            if item == tahun and data['BULAN'] == 'Desember':
+            if item1 == tahun and (item2 == data['BULAN'] == bulan):
                 st.write(input_gdp)
         
-    st.write("PROYEKSI PENERIMAAN BEA MASUK TAHUN: ",str(tahun))
-    st.write("## ", data[(data['TAHUN'] == tahun) & (data['BULAN'] == 'Desember')]['BEA MASUK'].values[0])
-    
+    st.write("Penerimaan Bea Masuk Tahun ",str(tahun), 'Bulan ', str(bulan))
+    st.write("## ", "Rp", data[(data['TAHUN'] == tahun) & (data['BULAN'] == bulan)]['BEA MASUK'].values[0])
+
+        
     if st.button("Prediksi"):
         st.write("## Prediksi Sukses")
         #define X & y
@@ -120,12 +131,13 @@ if menu == "Prediksi":
         df_kosong_1['KURS TENGAH BI (AVG)'] = df_1_pred['KURS TENGAH BI (AVG)']
         pred_1 = loaded_model.predict(df_kosong_1)
         beamasukpred = data[(data['TAHUN'] == tahun) & (data['BULAN'] == 'Desember')]['BEA MASUK'].values[0]
-        pred_selisih = pred_1 - beamasukpred
-        st.write('Prediksi Bea Masuk : ')
-        st.write('{0:.2f}'.format(pred_1[0]))
+        pred_selisih = (beamasukpred / pred_1  -1)*100
+    
+        # st.write("Bea Masuk Tahun ",str(tahun), 'Bulan ', str(bulan))
+        # st.write('{0:.2f}'.format(pred_1[0]))
 
-        st.write('Bea Masuk berdasarkan data diatas : ')
-        st.write('{0:.2f}'.format(beamasukpred))
+        st.write('Prediksi Bea Masuk Periode Berikutnya: ')
+        st.write("## ", "Rp", '{0:.2f}'.format(beamasukpred))
 
-        st.write('Selisih Prediksi Bea Masuk : ')
-        st.write('{0:.2f}'.format(pred_selisih[0]))
+        st.write('Prediksi Growth Bea Masuk : ')
+        st.write('{0:.2f}'.format(pred_selisih[0]), "%")
