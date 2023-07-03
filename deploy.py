@@ -58,19 +58,15 @@ if menu == "Prediksi":
         if item2 == bulan:
             st.write(' Bulan yang dipilih adalah ', str (bulan))
 
-    # st.write(data.head(2))
-    # tahun= st.selectbox("Pilih tahun",data['TAHUN'].unique())
-    # for item in data['TAHUN'].unique():
-    #      if item == tahun:
-    #          st.write(' Tahun yang dipilih adalah ', str(tahun))
+
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("<p style='text-align: center; color: #FFCC29; font-family:arial'>INFLASI</p>", unsafe_allow_html=True)
-        input_inf = st.number_input('Nilai inflasi',key=1, value= data[(data['BULAN'] == bulan) & (data['TAHUN'] == tahun)]['INFLASI'].values[0])
+        input_inf = st.number_input('Nilai inflasi', key=1, value= data[(data['BULAN'] == bulan) & (data['TAHUN'] == tahun)]['INFLASI'].values[0])
         for item3 in data['INFLASI'].unique():
             if item1 == tahun and (item2 == data['BULAN'] == bulan):
                 st.write(input_inf)
-        
+       
         
         st.markdown("<p style='text-align: center; color: #FFCC29; font-family:arial'>ARAMCO (AVG)  </p>", unsafe_allow_html=True)
         input_aramco= st.number_input('ARAMCO (AVG)',key=2,value= data[(data['TAHUN'] == tahun) & (data['BULAN'] == bulan)]['ARAMCO (AVG)'].values[0])
@@ -94,7 +90,37 @@ if menu == "Prediksi":
     st.write("Penerimaan Bea Masuk Tahun ",str(tahun), 'Bulan ', str(bulan))
     st.write("## ", "Rp", data[(data['TAHUN'] == tahun) & (data['BULAN'] == bulan)]['BEA MASUK'].values[0])
 
-        
+    if bulan == "Januari":
+            bulandepan = "Februari"
+    if bulan == "Februari":
+            bulandepan = "Maret"
+    if bulan == "Maret":
+            bulandepan = "April"
+    if bulan == "April":
+            bulandepan = "Mei"
+    if bulan == "Mei":
+            bulandepan = "Juni"
+    if bulan == "Juni":
+            bulandepan = "Juli"
+    if bulan == "Juli":
+            bulandepan = "Agustus"
+    if bulan == "Agustus":
+            bulandepan = "September"
+    if bulan == "September":
+            bulandepan = "Oktober"
+    if bulan == "Oktober":
+            bulandepan = "November"
+    if bulan == "November":
+            bulandepan = "Desember"
+    if bulan == "Desember":
+            bulandepan = "Januari"    
+
+    # for item10 in data['BULAN'].unique():
+    #     if item10 == bulan:
+    #         # st.write (' Bulan depan ', str (bulandepan))
+
+     
+    
     if st.button("Prediksi"):
         st.write("## Prediksi Sukses")
         #define X & y
@@ -104,6 +130,8 @@ if menu == "Prediksi":
         # for item in df.index:
         #     if item == tahun:
         #         tahun_enc = df.loc[provinsi].values[0]
+        
+
         df_1_pred = pd.DataFrame({
             
             'INFLASI' : input_inf,
@@ -124,20 +152,24 @@ if menu == "Prediksi":
             for j in list_1:
                 if i == j:
                     df_kosong_1[i] = df_kosong_1[i].replace(df_kosong_1[i].values,1)  
-       
+      
+
         df_kosong_1['INFLASI'] = df_1_pred['INFLASI']
         df_kosong_1['GDP'] = df_1_pred['GDP']
         df_kosong_1['ARAMCO (AVG)'] = df_1_pred['ARAMCO (AVG)']
         df_kosong_1['KURS TENGAH BI (AVG)'] = df_1_pred['KURS TENGAH BI (AVG)']
         pred_1 = loaded_model.predict(df_kosong_1)
-        beamasukpred = data[(data['TAHUN'] == tahun) & (data['BULAN'] == 'Desember')]['BEA MASUK'].values[0]
-        pred_selisih = (beamasukpred / pred_1  -1)*100
+        beamasukpred = data[(data['TAHUN'] == tahun) & (data['BULAN'] == bulandepan)]['BEA MASUK'].values[0]
+        pred_selisih = (beamasukpred / pred_1 -1)*100
     
-        # st.write("Bea Masuk Tahun ",str(tahun), 'Bulan ', str(bulan))
-        # st.write('{0:.2f}'.format(pred_1[0]))
+        st.write("Bea Masuk Tahun ",str(tahun), 'Bulan ', str(bulan))
+        st.write('{0:.2f}'.format(pred_1[0]))
 
-        st.write('Prediksi Bea Masuk Periode Berikutnya: ')
+        st.write('Prediksi Bea Masuk Periode', str(bulandepan))
         st.write("## ", "Rp", '{0:.2f}'.format(beamasukpred))
 
         st.write('Prediksi Growth Bea Masuk : ')
         st.write('{0:.2f}'.format(pred_selisih[0]), "%")
+
+
+
